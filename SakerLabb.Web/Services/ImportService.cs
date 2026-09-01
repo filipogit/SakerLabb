@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Newtonsoft.Json;
 
@@ -47,14 +48,21 @@ public class ImportService
         return await response.Content.ReadAsStringAsync();
     }
 
+    private static readonly Regex ValidHostPattern = new(@"^[a-zA-Z0-9._\-]+$");
+
     public string Ping(string host)
     {
+        if (string.IsNullOrWhiteSpace(host) || !ValidHostPattern.IsMatch(host))
+        {
+            return "Ogiltigt hostnamn.";
+        }
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "cmd.exe",
-                Arguments = "/c ping -n 2 " + host,
+                FileName = "ping",
+                ArgumentList = { "-n", "2", host },
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
