@@ -63,7 +63,7 @@ Plats:       TicketRepository.cs (rad 26, 38, 48, 71, 80) och UserRepository.cs 
 Bevis före:  Skärmbild från Code Scanning som visar 12 "SQL query built from user-controlled sources" alerts med allvarlighetsgrad High
 Bedömning:   Verkligt positivt. Alla SQL-frågor använder strängkonkatenering med input direkt från HTTP-requests.
 Åtgärd:      Ersatte all strängkonkatenering med parametriserade frågor ($-parametrar via SqliteCommand.Parameters.AddWithValue). Sort-kolumnen valideras mot en whitelist. Lösenord loggas inte längre i klartext. Commit: 621c275
-Bevis efter: Ny CodeQL-körning efter merge till main – alerts #1–#12 byter status till Fixed.
+Bevis efter: Ny CodeQL-körning efter merge till main – alerts #1–#12 byter status till Fixed (se skärmbild nedan).
 ```
 
 ### Åtgärd 2
@@ -74,7 +74,7 @@ Plats:       ImportService.cs:57
 Bevis före:  Skärmbild från Code Scanning: "Uncontrolled command line", Critical, ImportService.cs:57
 Bedömning:   Verkligt positivt. Host-parametern konkateneras rakt in i cmd.exe /c-anropet.
 Åtgärd:      Ersatte cmd.exe-anropet med direkt ping-exekvering via ArgumentList (ingen shelltolkning). Lade till inputvalidering med regex-whitelist som bara tillåter [a-zA-Z0-9._-]. Commit: 68e56cd
-Bevis efter: Ny CodeQL-körning efter merge till main – alert #14 byter status till Fixed.
+Bevis efter: Ny CodeQL-körning efter merge till main – alert #14 byter status till Fixed (se skärmbild nedan).
 ```
 
 ### Åtgärd 3
@@ -85,8 +85,12 @@ Plats:       Tickets.razor:21, Login.razor:10
 Bevis före:  Skärmbild från Code Scanning: "Cross-site scripting", High, i Tickets.razor:21 och Login.razor:10
 Bedömning:   Verkligt positivt. MarkupString kringgår Blazors automatiska HTML-encoding.
 Åtgärd:      Tog bort MarkupString-casten så att Blazors standard @-output används, som automatiskt HTML-encodar all output. Commit: bce269c
-Bevis efter: Ny CodeQL-körning efter merge till main – alerts #21 och #22 byter status till Fixed.
+Bevis efter: Ny CodeQL-körning efter merge till main – alerts #21 och #22 byter status till Fixed (se skärmbild nedan).
 ```
+
+**Bevis efter (alla tre åtgärder) – CodeQL-körning efter merge:**
+
+![CodeQL code scanning efter merge – Closed alerts](bilder/codeql-after-fix.png)
 
 ---
 
